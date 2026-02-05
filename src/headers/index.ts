@@ -36,12 +36,9 @@ export const createL2Headers = async (
     creds: ApiKeyCreds,
     l2HeaderArgs: L2HeaderArgs,
     timestamp?: number,
+    signerAddress: string = "",
 ): Promise<L2PolyHeader> => {
     let ts = Math.floor(Date.now() / 1000);
-    if (timestamp !== undefined) {
-        ts = timestamp;
-    }
-    const address = await signer.getAddress();
 
     const sig = await buildPolyHmacSignature(
         creds.secret,
@@ -52,7 +49,7 @@ export const createL2Headers = async (
     );
 
     const headers = {
-        POLY_ADDRESS: address,
+        POLY_ADDRESS: signerAddress,
         POLY_SIGNATURE: sig,
         POLY_TIMESTAMP: `${ts}`,
         POLY_API_KEY: creds.key,

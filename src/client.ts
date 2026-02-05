@@ -144,6 +144,7 @@ export class ClobClient {
 
     // Used to perform Level 1 authentication and sign orders
     readonly signer?: Wallet | JsonRpcSigner;
+    readonly signerAddress: string;
 
     // Used to perform Level 2 authentication
     readonly creds?: ApiKeyCreds;
@@ -170,6 +171,7 @@ export class ClobClient {
     constructor(
         host: string,
         chainId: Chain,
+        signerAddress: string,
         signer?: Wallet | JsonRpcSigner,
         creds?: ApiKeyCreds,
         signatureType?: SignatureType,
@@ -182,6 +184,8 @@ export class ClobClient {
     ) {
         this.host = host.endsWith("/") ? host.slice(0, -1) : host;
         this.chainId = chainId;
+        this.feeRates = {};
+        this.signerAddress = signerAddress;
 
         if (signer !== undefined) {
             this.signer = signer;
@@ -813,29 +817,13 @@ export class ClobClient {
         userOrder: UserOrder,
         options?: Partial<CreateOrderOptions>,
     ): Promise<SignedOrder> {
-        this.canL1Auth();
-
         const { tokenID } = userOrder;
-
-        const tickSize = await this._resolveTickSize(tokenID, options?.tickSize);
-
-        const feeRateBps = await this._resolveFeeRateBps(tokenID, userOrder.feeRateBps);
-        userOrder.feeRateBps = feeRateBps;
-
-        if (!priceValid(userOrder.price, tickSize)) {
-            throw new Error(
-                `invalid price (${userOrder.price}), min: ${parseFloat(tickSize)} - max: ${
-                    1 - parseFloat(tickSize)
-                }`,
-            );
-        }
-
-        const negRisk = options?.negRisk ?? (await this.getNegRisk(tokenID));
+        userOrder.feeRateBps = this.feeRates[tokenID] ?? 1000;
 
         return this.orderBuilder.buildOrder(userOrder, {
-            tickSize,
-            negRisk,
-        });
+            tickSize: "0.01",
+            negRisk: options?.negRisk ?? false,
+        }, this.signerAddress);
     }
 
     public async createMarketOrder(
@@ -939,7 +927,6 @@ export class ClobClient {
         deferExec = false,
         postOnly = false,
     ): Promise<any> {
-        this.canL2Auth();
         const endpoint = POST_ORDER;
         const orderPayload = orderToJson(order, this.creds?.key || "", orderType, deferExec, postOnly);
 
@@ -953,16 +940,7 @@ export class ClobClient {
             this.signer as Wallet | JsonRpcSigner,
             this.creds as ApiKeyCreds,
             l2HeaderArgs,
-            this.useServerTime ? await this.getServerTime() : undefined,
         );
-
-        // builders flow
-        if (this.canBuilderAuth()) {
-            const builderHeaders = await this._generateBuilderHeaders(headers, l2HeaderArgs);
-            if (builderHeaders !== undefined) {
-                return this.post(`${this.host}${endpoint}`, { headers: builderHeaders, data: orderPayload });
-            }
-        }
 
         return this.post(`${this.host}${endpoint}`, { headers, data: orderPayload });
     }

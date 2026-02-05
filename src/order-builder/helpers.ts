@@ -53,12 +53,13 @@ export const ROUNDING_CONFIG: Record<TickSize, RoundConfig> = {
  * @returns SignedOrder
  */
 export const buildOrder = async (
-    signer: Wallet | JsonRpcSigner,
+    eoaSigner: Wallet | JsonRpcSigner,
+    eoaSignerAddress: string,
     exchangeAddress: string,
     chainId: number,
     orderData: OrderData,
 ): Promise<SignedOrder> => {
-    const cTFExchangeOrderBuilder = new ExchangeOrderBuilder(exchangeAddress, chainId, signer);
+    const cTFExchangeOrderBuilder = new ExchangeOrderBuilder(exchangeAddress, chainId, eoaSigner, eoaSignerAddress);
     return cTFExchangeOrderBuilder.buildSignedOrder(orderData);
 };
 
@@ -164,16 +165,15 @@ export const buildOrderCreationArgs = async (
 
 export const createOrder = async (
     eoaSigner: Wallet | JsonRpcSigner,
+    eoaSignerAddress: string,
     chainId: Chain,
     signatureType: SignatureType,
     funderAddress: string | undefined,
     userOrder: UserOrder,
     options: CreateOrderOptions,
 ): Promise<SignedOrder> => {
-    const eoaSignerAddress = await eoaSigner.getAddress();
-
     // If funder address is not given, use the signer address
-    const maker = funderAddress === undefined ? eoaSignerAddress : funderAddress;
+    const maker = eoaSignerAddress;
     const contractConfig = getContractConfig(chainId);
 
     const orderData = await buildOrderCreationArgs(
@@ -188,7 +188,7 @@ export const createOrder = async (
         ? contractConfig.negRiskExchange
         : contractConfig.exchange;
 
-    return buildOrder(eoaSigner, exchangeContract, chainId, orderData);
+    return buildOrder(eoaSigner, eoaSignerAddress, exchangeContract, chainId, orderData);
 };
 
 export const getMarketOrderRawAmounts = (
@@ -314,7 +314,7 @@ export const createMarketOrder = async (
         ? contractConfig.negRiskExchange
         : contractConfig.exchange;
 
-    return buildOrder(eoaSigner, exchangeContract, chainId, orderData);
+    return buildOrder(eoaSigner, eoaSignerAddress, exchangeContract, chainId, orderData);
 };
 
 /**

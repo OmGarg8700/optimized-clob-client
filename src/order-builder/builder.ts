@@ -47,10 +47,12 @@ export class OrderBuilder {
     public async buildOrder(
         userOrder: UserOrder,
         options: CreateOrderOptions,
+        signerAddress: string,
     ): Promise<SignedOrder> {
         const signer = await this.resolveSigner();
         return createOrder(
             signer,
+            signerAddress,
             this.chainId,
             this.signatureType,
             this.funderAddress,
