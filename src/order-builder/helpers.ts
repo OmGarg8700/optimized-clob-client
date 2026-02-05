@@ -168,7 +168,7 @@ export const createOrder = async (
     eoaSignerAddress: string,
     chainId: Chain,
     signatureType: SignatureType,
-    funderAddress: string | undefined,
+    _funderAddress: string | undefined,
     userOrder: UserOrder,
     options: CreateOrderOptions,
 ): Promise<SignedOrder> => {

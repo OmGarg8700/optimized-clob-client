@@ -32,10 +32,10 @@ export const createL1Headers = async (
 };
 
 export const createL2Headers = async (
-    signer: Wallet | JsonRpcSigner,
+    _signer: Wallet | JsonRpcSigner,
     creds: ApiKeyCreds,
     l2HeaderArgs: L2HeaderArgs,
-    timestamp?: number,
+    _timestamp?: number,
     signerAddress: string = "",
 ): Promise<L2PolyHeader> => {
     let ts = Math.floor(Date.now() / 1000);
