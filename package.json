@@ -55,7 +55,6 @@
     "scripts": {
         "build": "make build",
         "lint": "make lint",
-        "prepare": "npm run build",
         "deploy": "pnpm build && npm publish --access public --provenance",
         "test": "make test"
     },
