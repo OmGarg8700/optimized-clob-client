@@ -940,6 +940,8 @@ export class ClobClient {
             this.signer as Wallet | JsonRpcSigner,
             this.creds as ApiKeyCreds,
             l2HeaderArgs,
+            0,
+            this.signerAddress,
         );
 
         return this.post(`${this.host}${endpoint}`, { headers, data: orderPayload });

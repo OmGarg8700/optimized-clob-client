@@ -505,7 +505,7 @@ export class ClobClient {
             requestPath: endpoint,
             body: JSON.stringify(orderPayload),
         };
-        const headers = await createL2Headers(this.signer, this.creds, l2HeaderArgs);
+        const headers = await createL2Headers(this.signer, this.creds, l2HeaderArgs, 0, this.signerAddress);
         return this.post(`${this.host}${endpoint}`, { headers, data: orderPayload });
     }
     async postOrders(args, deferExec = false, defaultPostOnly = false) {

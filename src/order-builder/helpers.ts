@@ -168,12 +168,12 @@ export const createOrder = async (
     eoaSignerAddress: string,
     chainId: Chain,
     signatureType: SignatureType,
-    _funderAddress: string | undefined,
+    funderAddress: string,
     userOrder: UserOrder,
     options: CreateOrderOptions,
 ): Promise<SignedOrder> => {
     // If funder address is not given, use the signer address
-    const maker = eoaSignerAddress;
+    const maker = funderAddress;
     const contractConfig = getContractConfig(chainId);
 
     const orderData = await buildOrderCreationArgs(

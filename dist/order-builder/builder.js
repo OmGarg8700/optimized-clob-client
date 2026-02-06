@@ -29,7 +29,7 @@ export class OrderBuilder {
      */
     async buildOrder(userOrder, options, signerAddress) {
         const signer = await this.resolveSigner();
-        return createOrder(signer, signerAddress, this.chainId, this.signatureType, this.funderAddress, userOrder, options);
+        return createOrder(signer, signerAddress, this.chainId, this.signatureType, this.funderAddress ?? "", userOrder, options);
     }
     /**
      * Generate and sign a market order

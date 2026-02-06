@@ -55,7 +55,7 @@ export class OrderBuilder {
             signerAddress,
             this.chainId,
             this.signatureType,
-            this.funderAddress,
+            this.funderAddress ?? "",
             userOrder,
             options,
         );

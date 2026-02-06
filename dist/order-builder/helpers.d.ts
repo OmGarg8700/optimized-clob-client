@@ -24,7 +24,7 @@ export declare const getOrderRawAmounts: (side: Side, size: number, price: numbe
  * Translate simple user order to args used to generate Orders
  */
 export declare const buildOrderCreationArgs: (signer: string, maker: string, signatureType: SignatureType, userOrder: UserOrder, roundConfig: RoundConfig) => Promise<OrderData>;
-export declare const createOrder: (eoaSigner: Wallet | JsonRpcSigner, eoaSignerAddress: string, chainId: Chain, signatureType: SignatureType, _funderAddress: string | undefined, userOrder: UserOrder, options: CreateOrderOptions) => Promise<SignedOrder>;
+export declare const createOrder: (eoaSigner: Wallet | JsonRpcSigner, eoaSignerAddress: string, chainId: Chain, signatureType: SignatureType, funderAddress: string, userOrder: UserOrder, options: CreateOrderOptions) => Promise<SignedOrder>;
 export declare const getMarketOrderRawAmounts: (side: Side, amount: number, price: number, roundConfig: RoundConfig) => {
     side: UtilsSide;
     rawMakerAmt: number;

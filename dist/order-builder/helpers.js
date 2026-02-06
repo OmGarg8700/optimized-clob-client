@@ -114,9 +114,9 @@ export const buildOrderCreationArgs = async (signer, maker, signatureType, userO
         signatureType,
     };
 };
-export const createOrder = async (eoaSigner, eoaSignerAddress, chainId, signatureType, _funderAddress, userOrder, options) => {
+export const createOrder = async (eoaSigner, eoaSignerAddress, chainId, signatureType, funderAddress, userOrder, options) => {
     // If funder address is not given, use the signer address
-    const maker = eoaSignerAddress;
+    const maker = funderAddress;
     const contractConfig = getContractConfig(chainId);
     const orderData = await buildOrderCreationArgs(eoaSignerAddress, maker, signatureType, userOrder, ROUNDING_CONFIG[options.tickSize]);
     const exchangeContract = options.negRisk
